@@ -1,0 +1,99 @@
+# Morning Paper config.
+# Copy this file to config.toml and edit it. It's committed to your repo, so it must NEVER
+# hold secrets: logins, passwords and your Instapaper address go in GitHub Actions secrets.
+#
+# Every section is optional. Leave a block out (or remove it from `sections`) and it's skipped.
+# See examples/halifax.toml for a full local setup with traffic and local news.
+
+[general]
+timezone = "America/Toronto"   # any IANA name: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+lookback_hours = 26            # how far back news items can be
+title_prefix = "Morning Paper"
+units = "metric"               # or "imperial"
+# How it reaches Instapaper:
+#   "html" — the paper is the email body. Links work; best for reading in the Instapaper app.
+#   "pdf"  — a Kobo-sized PDF attachment. Shows up on a Kobo (which skips emailed articles), but links suffer.
+#   "link" — hosted on Cloudflare R2, link emailed. Syncs to Kobo and keeps links; needs R2 secrets.
+delivery = "html"
+# Which sections appear, in this order. Remove any you don't want.
+sections = ["heads_up", "weather", "traffic", "local", "cyber", "sky"]
+
+[location]
+name = "Toronto, ON"
+lat = 43.6532
+lon = -79.3832
+elevation_m = 76
+
+# ---------- Weather ----------
+# Open-Meteo works anywhere with no key. In Canada you can add Environment Canada's RSS feed for
+# official warnings and forecast text: find your city at weather.gc.ca and use its RSS link.
+# [weather]
+# ec_rss = ["https://weather.gc.ca/rss/city/on-143_e.xml"]
+
+# ---------- Traffic & construction (optional) ----------
+# Plain RSS feeds from your city/province. `filter_by_area` keeps only items mentioning `area_keywords`.
+# [traffic]
+# max_items = 8
+# area_keywords = ["Toronto", "Gardiner", "DVP", "Highway 401"]
+#
+# [[traffic.feeds]]
+# name = "Ontario 511 advisories"
+# url = "https://example.ca/traffic.rss"
+# filter_by_area = true
+# lookback_hours = 48
+
+# ---------- Local news (optional) ----------
+# [[local_news]]
+# name = "CBC Toronto"
+# url = "https://www.cbc.ca/webfeed/rss/rss-canada-toronto"
+# max_items = 3
+
+# ---------- Cybersecurity ----------
+[[cyber_news]]
+name = "BleepingComputer"
+url = "https://www.bleepingcomputer.com/feed/"
+max_items = 5
+
+[[cyber_news]]
+name = "The Hacker News"
+url = "https://feeds.feedburner.com/TheHackersNews"
+max_items = 5
+
+[[cyber_news]]
+name = "Canadian Centre for Cyber Security"
+url = "https://www.cyber.gc.ca/api/cccs/rss/v1/get?feed=alerts_advisories&lang=en"
+max_items = 4
+
+# Mainstream feeds: only used to spot "this made the big news" cyber stories
+[[mainstream]]
+name = "BBC Technology"
+url = "https://feeds.bbci.co.uk/news/technology/rss.xml"
+
+[[mainstream]]
+name = "BBC World"
+url = "https://feeds.bbci.co.uk/news/world/rss.xml"
+
+[heads_up]
+cisa_kev = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+# The vendors/products YOU care about. A hit (+3) is enough on its own to land in Heads Up.
+watchlist = ["Okta", "Entra", "Active Directory", "OpenSSH"]
+# Big vendors (+1): only matters combined with an alarm phrase or wider coverage
+big_vendors = ["Microsoft", "Windows", "Fortinet", "Palo Alto", "Ivanti", "Citrix", "VMware",
+               "Cisco", "Linux kernel", "Google Chrome", "Apple", "AWS", "Cloudflare", "CrowdStrike"]
+# Phrases that suggest "my day is gonna suck" (+1 each, max 3)
+alarm_phrases = ["zero-day", "0-day", "actively exploited", "exploited in the wild", "emergency directive",
+                 "global outage", "worldwide outage", "widespread outage", "mass exploitation",
+                 "supply chain attack", "supply-chain attack", "cvss 10", "critical vulnerability",
+                 "patch now", "wormable", "ransomware attack", "data breach", "outage", "hacked",
+                 "cyberattack", "cyber attack"]
+# Only these count when they show up in mainstream headlines (+2)
+mainstream_cyber_words = ["hack", "cyber", "ransomware", "breach", "outage", "malware", "vulnerab",
+                          "data leak", "it failure", "systems down", "crowdstrike", "microsoft"]
+score_threshold = 3
+
+# ---------- Sky News ----------
+# Works anywhere from lat/lon. Aurora thresholds suit mid-latitudes (~44°N); lower them if you're farther north.
+[sky]
+aurora_kp_watch = 5
+aurora_kp_good = 6
+min_planet_alt_deg = 10
